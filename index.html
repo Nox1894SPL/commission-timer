@@ -120,7 +120,7 @@
 <body>
 <div class="card">
   <div class="label">Public Comment Timer</div>
-  <div id="timer-display">3:00</div>
+  <div id="timer-display">30:00</div>
   <div id="progress-wrap"><div id="progress-bar"></div></div>
   <div id="status">Ready — press Start to begin</div>
   <div class="controls">
@@ -131,27 +131,28 @@
     <span class="preset-label">Duration:</span>
     <button class="pbtn" id="p1" onclick="setDuration(1,'p1')">1 min</button>
     <button class="pbtn" id="p2" onclick="setDuration(2,'p2')">2 min</button>
-    <button class="pbtn active" id="p3" onclick="setDuration(3,'p3')">3 min</button>
+    <button class="pbtn" id="p3" onclick="setDuration(3,'p3')">3 min</button>
     <button class="pbtn" id="p5" onclick="setDuration(5,'p5')">5 min</button>
-    <button class="pbtn" id="p30" onclick="setDuration(30,'p30')">30 min</button>
+    <button class="pbtn" id="p10" onclick="setDuration(10,'p10')">10 min</button>
+    <button class="pbtn" id="p15" onclick="setDuration(15,'p15')">15 min</button>
+    <button class="pbtn active" id="p30" onclick="setDuration(30,'p30')">30 min</button>
   </div>
   <button class="test-btn" onclick="playBeep()">Test Sound</button>
 </div>
 
 <script>
-  var totalSeconds = 180;
-  var remaining = 180;
+  var totalSeconds = 1800;
+  var remaining = 1800;
   var interval = null;
   var running = false;
   var audioCtx = null;
+  var beepLoop = null;
 
   function getCtx() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
   }
-
-  var beepLoop = null;
 
   function playBeep() {
     var ctx = getCtx();
@@ -255,6 +256,7 @@
     totalSeconds = mins * 60;
     remaining = totalSeconds;
     clearInterval(interval); interval = null; running = false;
+    stopBeepLoop();
     display.style.color = '#222';
     display.classList.remove('flash');
     bar.style.background = '#1D9E75';
