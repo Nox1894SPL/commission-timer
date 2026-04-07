@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.2">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;Public Comment Timer&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #f5f5f5;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>min-height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.card {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 2px 16px rgba(0,0,0,0.10);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 48px 40px 36px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>max-width: 480px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 24px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.label {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: 0.1em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #999;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#timer-display {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: clamp(72px, 22vw, 150px);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: 'Courier New', monospace;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: 0.04em;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #222;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transition: color 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#progress-wrap {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>height: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #eee;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#progress-bar {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #1D9E75;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transition: width 0.8s linear, background 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>#status {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #888;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>min-height: 22px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.controls {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>flex-wrap: wrap;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 17px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 500;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 13px 30px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1.5px solid #ddd;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #333;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>min-width: 130px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transition: background 0.15s, transform 0.1s;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn:hover { background: #f0f0f0; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn:active { transform: scale(0.97); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-start { background: #1D9E75; color: #fff; border-color: #0F6E56; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.btn-start:hover { background: #0F6E56; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.presets {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>flex-wrap: wrap;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.preset-label { font-size: 13px; color: #aaa; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pbtn {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 6px 14px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1.5px solid #ddd;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #f5f5f5;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #666;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transition: background 0.15s;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pbtn:hover { background: #eee; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pbtn.active { border-color: #1D9E75; color: #1D9E75; background: #e8f7f2; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.test-btn {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 7px 18px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1.5px solid #ddd;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: #f9f9f9;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: #888;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.test-btn:hover { background: #f0f0f0; color: #333; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.flash { animation: blink 0.8s infinite; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1">&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="label"&gt;Public Comment Timer&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="timer-display"&gt;3:00&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="progress-wrap"&gt;&lt;div id="progress-bar"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="status"&gt;Ready — press Start to begin&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn btn-start" id="main-btn" onclick="handleMain()"&gt;Start&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" onclick="handleReset()"&gt;Reset&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="presets"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="preset-label"&gt;Duration:&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pbtn" id="p1" onclick="setDuration(1,'p1')"&gt;1 min&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pbtn" id="p2" onclick="setDuration(2,'p2')"&gt;2 min&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pbtn active" id="p3" onclick="setDuration(3,'p3')"&gt;3 min&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pbtn" id="p5" onclick="setDuration(5,'p5')"&gt;5 min&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="pbtn" id="p30" onclick="setDuration(30,'p30')"&gt;30 min&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button class="test-btn" onclick="playBeep()"&gt;Test Sound&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var totalSeconds = 180;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var remaining = 180;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var interval = null;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var running = false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var audioCtx = null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function getCtx() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (audioCtx.state === 'suspended') audioCtx.resume();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return audioCtx;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function playBeep() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var ctx = getCtx();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>var now = ctx.currentTime;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>[0, 0.4, 0.8].forEach(function(offset) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var osc = ctx.createOscillator();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>var gain = ctx.createGain();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>osc.connect(gain);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gain.connect(ctx.destination);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>osc.type = 'sine';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>osc.frequency.value = 880;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gain.gain.setValueAtTime(0, now + offset);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gain.gain.linearRampToValueAtTime(0.7, now + offset + 0.02);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.3);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>osc.start(now + offset);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>osc.stop(now + offset + 0.4);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function fmt(s) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return Math.floor(s / 60) + ':' + (s % 60 &lt; 10 ? '0' : '') + (s % 60);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>var display<span class="Apple-converted-space">  </span>= document.getElementById('timer-display');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var statusEl = document.getElementById('status');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var mainBtn<span class="Apple-converted-space">  </span>= document.getElementById('main-btn');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>var bar<span class="Apple-converted-space">      </span>= document.getElementById('progress-bar');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function updateDisplay() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.textContent = fmt(remaining);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>bar.style.width = ((remaining / totalSeconds) * 100) + '%';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (remaining === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display.style.color = '#E24B4A';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>bar.style.background = '#E24B4A';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display.classList.add('flash');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.textContent = 'Time is up!';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.style.color = '#E24B4A';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>mainBtn.textContent = 'Start';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>mainBtn.className = 'btn btn-start';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>running = false;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>clearInterval(interval);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>interval = null;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>playBeep();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else if (remaining &lt;= 30) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display.style.color = '#BA7517';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>bar.style.background = '#EF9F27';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.textContent = 'Less than 30 seconds remaining';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.style.color = '#BA7517';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display.style.color = '#222';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>bar.style.background = '#1D9E75';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.textContent = 'Timer running...';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.style.color = '#888';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function handleMain() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>getCtx();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (remaining === 0) return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (running) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>clearInterval(interval); interval = null; running = false;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>mainBtn.textContent = 'Resume';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.textContent = 'Paused';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.style.color = '#888';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>running = true;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>mainBtn.textContent = 'Pause';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statusEl.textContent = 'Timer running...';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>interval = setInterval(function() { remaining--; updateDisplay(); }, 1000);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function handleReset() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>clearInterval(interval); interval = null; running = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>remaining = totalSeconds;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.style.color = '#222';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.classList.remove('flash');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>bar.style.background = '#1D9E75';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>bar.style.width = '100%';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.textContent = fmt(remaining);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>mainBtn.textContent = 'Start';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>mainBtn.className = 'btn btn-start';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.textContent = 'Ready — press Start to begin';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.style.color = '#888';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function setDuration(mins, pid) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.querySelectorAll('.pbtn').forEach(function(b){ b.classList.remove('active'); });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById(pid).classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>totalSeconds = mins * 60;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>remaining = totalSeconds;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>clearInterval(interval); interval = null; running = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.style.color = '#222';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.classList.remove('flash');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>bar.style.background = '#1D9E75';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>bar.style.width = '100%';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display.textContent = fmt(remaining);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>mainBtn.textContent = 'Start';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>mainBtn.className = 'btn btn-start';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.textContent = 'Ready — press Start to begin';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statusEl.style.color = '#888';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
