@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Comment Timer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+    padding: 48px 40px 36px;
+    max-width: 480px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .label {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #999;
+  }
+  #timer-display {
+    font-size: clamp(72px, 22vw, 150px);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: #222;
+    transition: color 0.3s;
+  }
+  #progress-wrap {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  #progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #1D9E75;
+    border-radius: 4px;
+    transition: width 0.8s linear, background 0.3s;
+  }
+  #status {
+    font-size: 15px;
+    color: #888;
+    min-height: 22px;
+    text-align: center;
+  }
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn {
+    font-size: 17px;
+    font-weight: 500;
+    padding: 13px 30px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    min-width: 130px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn:hover { background: #f0f0f0; }
+  .btn:active { transform: scale(0.97); }
+  .btn-start { background: #1D9E75; color: #fff; border-color: #0F6E56; }
+  .btn-start:hover { background: #0F6E56; }
+  .presets {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .preset-label { font-size: 13px; color: #aaa; }
+  .pbtn {
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #ddd;
+    background: #f5f5f5;
+    color: #666;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .pbtn:hover { background: #eee; }
+  .pbtn.active { border-color: #1D9E75; color: #1D9E75; background: #e8f7f2; }
+  .test-btn {
+    font-size: 13px;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: 1.5px solid #ddd;
+    background: #f9f9f9;
+    color: #888;
+    cursor: pointer;
+  }
+  .test-btn:hover { background: #f0f0f0; color: #333; }
+  .flash { animation: blink 0.8s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="label">Public Comment Timer</div>
+  <div id="timer-display">3:00</div>
+  <div id="progress-wrap"><div id="progress-bar"></div></div>
+  <div id="status">Ready — press Start to begin</div>
+  <div class="controls">
+    <button class="btn btn-start" id="main-btn" onclick="handleMain()">Start</button>
+    <button class="btn" onclick="handleReset()">Reset</button>
+  </div>
+  <div class="presets">
+    <span class="preset-label">Duration:</span>
+    <button class="pbtn" id="p1" onclick="setDuration(1,'p1')">1 min</button>
+    <button class="pbtn" id="p2" onclick="setDuration(2,'p2')">2 min</button>
+    <button class="pbtn active" id="p3" onclick="setDuration(3,'p3')">3 min</button>
+    <button class="pbtn" id="p5" onclick="setDuration(5,'p5')">5 min</button>
+    <button class="pbtn" id="p30" onclick="setDuration(30,'p30')">30 min</button>
+  </div>
+  <button class="test-btn" onclick="playBeep()">Test Sound</button>
+</div>
+
+<script>
+  var totalSeconds = 180;
+  var remaining = 180;
+  var interval = null;
+  var running = false;
+  var audioCtx = null;
+
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  var beepLoop = null;
+
+  function playBeep() {
+    var ctx = getCtx();
+    var now = ctx.currentTime;
+    [0, 0.4, 0.8].forEach(function(offset) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0, now + offset);
+      gain.gain.linearRampToValueAtTime(0.7, now + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.3);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.4);
+    });
+  }
+
+  function startBeepLoop() {
+    playBeep();
+    beepLoop = setInterval(playBeep, 1400);
+  }
+
+  function stopBeepLoop() {
+    clearInterval(beepLoop);
+    beepLoop = null;
+  }
+
+  function fmt(s) {
+    return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
+  }
+
+  var display  = document.getElementById('timer-display');
+  var statusEl = document.getElementById('status');
+  var mainBtn  = document.getElementById('main-btn');
+  var bar      = document.getElementById('progress-bar');
+
+  function updateDisplay() {
+    display.textContent = fmt(remaining);
+    bar.style.width = ((remaining / totalSeconds) * 100) + '%';
+    if (remaining === 0) {
+      display.style.color = '#E24B4A';
+      bar.style.background = '#E24B4A';
+      display.classList.add('flash');
+      statusEl.textContent = 'Time is up!';
+      statusEl.style.color = '#E24B4A';
+      mainBtn.textContent = 'Start';
+      mainBtn.className = 'btn btn-start';
+      running = false;
+      clearInterval(interval);
+      interval = null;
+      startBeepLoop();
+    } else if (remaining <= 30) {
+      display.style.color = '#BA7517';
+      bar.style.background = '#EF9F27';
+      statusEl.textContent = 'Less than 30 seconds remaining';
+      statusEl.style.color = '#BA7517';
+    } else {
+      display.style.color = '#222';
+      bar.style.background = '#1D9E75';
+      statusEl.textContent = 'Timer running...';
+      statusEl.style.color = '#888';
+    }
+  }
+
+  function handleMain() {
+    getCtx();
+    if (remaining === 0) return;
+    if (running) {
+      clearInterval(interval); interval = null; running = false;
+      mainBtn.textContent = 'Resume';
+      statusEl.textContent = 'Paused';
+      statusEl.style.color = '#888';
+    } else {
+      running = true;
+      mainBtn.textContent = 'Pause';
+      statusEl.textContent = 'Timer running...';
+      interval = setInterval(function() { remaining--; updateDisplay(); }, 1000);
+    }
+  }
+
+  function handleReset() {
+    clearInterval(interval); interval = null; running = false;
+    stopBeepLoop();
+    remaining = totalSeconds;
+    display.style.color = '#222';
+    display.classList.remove('flash');
+    bar.style.background = '#1D9E75';
+    bar.style.width = '100%';
+    display.textContent = fmt(remaining);
+    mainBtn.textContent = 'Start';
+    mainBtn.className = 'btn btn-start';
+    statusEl.textContent = 'Ready — press Start to begin';
+    statusEl.style.color = '#888';
+  }
+
+  function setDuration(mins, pid) {
+    document.querySelectorAll('.pbtn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById(pid).classList.add('active');
+    totalSeconds = mins * 60;
+    remaining = totalSeconds;
+    clearInterval(interval); interval = null; running = false;
+    display.style.color = '#222';
+    display.classList.remove('flash');
+    bar.style.background = '#1D9E75';
+    bar.style.width = '100%';
+    display.textContent = fmt(remaining);
+    mainBtn.textContent = 'Start';
+    mainBtn.className = 'btn btn-start';
+    statusEl.textContent = 'Ready — press Start to begin';
+    statusEl.style.color = '#888';
+  }
+</script>
+</body>
+</html>
