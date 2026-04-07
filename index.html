@@ -113,6 +113,16 @@
     cursor: pointer;
   }
   .test-btn:hover { background: #f0f0f0; color: #333; }
+  .fs-btn {
+    font-size: 13px;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: 1.5px solid #ddd;
+    background: #f9f9f9;
+    color: #888;
+    cursor: pointer;
+  }
+  .fs-btn:hover { background: #f0f0f0; color: #333; }
   .flash { animation: blink 0.8s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 </style>
@@ -127,20 +137,36 @@
     <button class="btn btn-start" id="main-btn" onclick="handleMain()">Start</button>
     <button class="btn" onclick="handleReset()">Reset</button>
   </div>
-  <div class="presets">
-    <span class="preset-label">Duration:</span>
-    <button class="pbtn" id="p1" onclick="setDuration(1,'p1')">1 min</button>
-    <button class="pbtn" id="p2" onclick="setDuration(2,'p2')">2 min</button>
-    <button class="pbtn" id="p3" onclick="setDuration(3,'p3')">3 min</button>
-    <button class="pbtn" id="p5" onclick="setDuration(5,'p5')">5 min</button>
-    <button class="pbtn" id="p10" onclick="setDuration(10,'p10')">10 min</button>
-    <button class="pbtn" id="p15" onclick="setDuration(15,'p15')">15 min</button>
-    <button class="pbtn active" id="p30" onclick="setDuration(30,'p30')">30 min</button>
+  <div style="border:1.5px solid #ddd; border-radius:10px; padding:12px 16px;">
+    <div style="text-align:center; font-size:13px; color:#aaa; margin-bottom:8px;">Duration</div>
+    <div class="presets">
+      <button class="pbtn" id="p1" onclick="setDuration(1,'p1')">1 min</button>
+      <button class="pbtn" id="p2" onclick="setDuration(2,'p2')">2 min</button>
+      <button class="pbtn" id="p3" onclick="setDuration(3,'p3')">3 min</button>
+      <button class="pbtn" id="p5" onclick="setDuration(5,'p5')">5 min</button>
+      <button class="pbtn" id="p10" onclick="setDuration(10,'p10')">10 min</button>
+      <button class="pbtn" id="p15" onclick="setDuration(15,'p15')">15 min</button>
+      <button class="pbtn active" id="p30" onclick="setDuration(30,'p30')">30 min</button>
+    </div>
   </div>
-  <button class="test-btn" onclick="playBeep()">Test Sound</button>
+  <div style="display:flex; gap:8px;">
+    <button class="test-btn" onclick="playBeep()">Test Sound</button>
+    <button class="fs-btn" onclick="toggleFS()">Full Screen</button>
+  </div>
 </div>
 
 <script>
+  function toggleFS() {
+    var el = document.documentElement;
+    if (!document.fullscreenElement) {
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  }
+
   var totalSeconds = 1800;
   var remaining = 1800;
   var interval = null;
